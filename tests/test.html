@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+    <title>Test date</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.css">
+    <script src="../src/router.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
+</head>
+<body>
+    <h1>router test</h1>
+    <div id="mocha"></div>
+    <script>
+
+        mocha.setup('tdd');
+        suite('router', function() {
+            var
+                expect = chai.expect,
+                router = window.router;
+
+            location.hash = '/';
+
+            test('it should initialize', function (done) {
+                router.on('/', function (e) {
+                    console.log('home!');
+                    expect(e.hash).to.equal('/');
+                    done();
+                });
+                //location.hash = '/';
+            });
+            test('it should listen to a simple route', function (done) {
+                router.on('/foo', function (e) {
+                    console.log('foo!');
+                    expect(e.hash).to.equal('/foo');
+                    done();
+                });
+                location.hash = '/foo';
+            });
+            test('it should listen to a double route', function (done) {
+                router.on('/foo/bar', function (e) {
+                    console.log('foo/bar!');
+                    expect(e.hash).to.equal('/foo/bar');
+                    done();
+                });
+                location.hash = '/foo/bar';
+            });
+            test('it should listen to a triple route', function (done) {
+                router.on('/foo/bar/zap', function (e) {
+                    console.log('foo/bar/zap!');
+                    expect(e.hash).to.equal('/foo/bar/zap');
+                    done();
+                });
+                location.hash = '/foo/bar/zap';
+            });
+            test('it should ignore a non-slash hash', function (done) {
+                router.on('/ignore', function (e) {
+                    console.log('hash!');
+                    expect('ignore').to.equal(false);
+                    done();
+                });
+                setTimeout(function () {
+                    expect('ignore').to.equal('ignore');
+                    done();
+                },100);
+                location.hash = 'ignore';
+            });
+            test('it should pass REST parameters', function (done) {
+                router.on('/endpoint/:clientId', function (e) {
+                    console.log('/endpoint/:clientId!', e);
+                    expect(e.clientId).to.equal('1234');
+                    done();
+                });
+                location.hash = '/endpoint/1234';
+            });
+            test('it should pass query parameters', function (done) {
+                router.on('/endpoint', function (e) {
+                    console.log('/endpoint!', e);
+                    expect(e.params.clientId).to.equal(987);
+                    expect(e.params.employeeId).to.equal(654);
+                    done();
+                });
+                location.hash = '/endpoint?clientId=987&employeeId=654';
+            });
+        });
+
+        mocha.run();
+
+    </script>
+</body>
+</html>
