@@ -114,6 +114,11 @@
             map[path] = true;
         });
 
+        if(hash.indexOf('/') !== 0){
+            // should start with slash
+            hash = '/';
+        }
+        console.log('hash', hash);
         return {
             url: url,
             hash: hash,

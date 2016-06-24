@@ -53,15 +53,12 @@
                 location.hash = '/foo/bar/zap';
             });
             test('it should ignore a non-slash hash', function (done) {
-                router.on('/ignore', function (e) {
+                router.on('/', function (e) {
                     console.log('hash!');
-                    expect('ignore').to.equal(false);
+                    expect(e.hash).to.equal('/');
                     done();
                 });
-                setTimeout(function () {
-                    expect('ignore').to.equal('ignore');
-                    done();
-                },100);
+                console.log('ignore......');
                 location.hash = 'ignore';
             });
             test('it should pass REST parameters', function (done) {
