@@ -16,8 +16,9 @@
             clearTimeout(initTimer);
             initTimer = setTimeout(function () {
                 window.addEventListener('hashchange', function (event) {
-                    //console.log('event', event);
-                    router.emit(parse(event.newURL, event.oldURL));
+                    //console.log('hashchange', event);
+                    // IE does not have URLs in the event
+                    router.emit(parse(event.newURL || location.href, event.oldURL));
                 });
                 router.emit(parse(location.href));
                 initialize = function () {};
@@ -85,6 +86,7 @@
     function parse(newUrl, oldUrl){
 
         currentState = urlToObject(newUrl);
+        // FIXME: either remove previous or stub it for IE
         currentState.previous = urlToObject(oldUrl);
         currentState.oldUrl = currentState.previous.url;
 
@@ -129,11 +131,13 @@
     }
 
     function getLastPath (url) {
+        if(!url) { return ''; }
         var paths = url.split('/');
         return paths[paths.length - 1];
     }
 
     function removeLastPath (url) {
+        if(!url) { return ''; }
         var paths = url.split('/');
         paths.pop();
         return paths.join('/');
