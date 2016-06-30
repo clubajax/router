@@ -78,6 +78,15 @@
                 });
                 location.hash = '/endpoint?clientId=987&employeeId=654';
             });
+
+            test('it should catch a route that is not used', function (done) {
+                router.on('not-found', function (e) {
+                    console.log('not-found', e);
+                    expect(e.hash).to.equal('/noListeners');
+                    done();
+                });
+                location.hash = '/noListeners';
+            });
         });
 
         mocha.run();

@@ -8,9 +8,11 @@
 
     var
         router,
+        uidCount = 0,
         currentState = {},
         callbacks = {},
         wildbacks = {},
+        notFound = {},
         initTimer,
         initialize = function () {
             clearTimeout(initTimer);
@@ -25,6 +27,10 @@
             },100);
         };
 
+    function uid () {
+        uidCount++;
+        return 'route-' + uidCount;
+    }
     // TODO:
     // more than one on('/route')
     // more than one REST param
@@ -35,12 +41,25 @@
 
         on: function (route, callback) {
             initialize();
+            var id;
+            if(route === 'not-found'){
+                id = uid();
+                notFound[id] = {
+                    callback: callback
+                };
+                return {
+                    remove: function () {
+                        delete callbacks[id];
+                    }
+                };
+            }
+
             if(route.indexOf(':') > -1){
                 // /worksheet/employees/:id
                 // /worksheet/employees/Mike123456
 
 
-                var id = route.split('/:')[0];
+                id = route.split('/:')[0];
                 wildbacks[id] = {
                     callback: callback,
                     prop: route.split('/:')[1]
@@ -52,7 +71,9 @@
                 };
             }
 
-            callbacks[route] = callback;
+            callbacks[route] = {
+                callback: callback
+            };
             return {
                 remove: function () {
                     delete callbacks[route];
@@ -68,7 +89,7 @@
                 lastPath = getLastPath(hash);
 
             if(callbacks[hash]){
-                callbacks[hash](eventDetail);
+                callbacks[hash].callback(eventDetail);
                 return;
             }
 
@@ -79,7 +100,14 @@
                 return;
             }
 
-            console.log('no route found (404)', hash);
+            if(Object.keys(notFound).length) {
+                Object.keys(notFound).forEach(function (key) {
+                    notFound[key].callback(eventDetail);
+                });
+            }else{
+                console.log('no route found (404)', hash);
+            }
+
         }
     };
 
