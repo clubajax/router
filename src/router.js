@@ -38,11 +38,12 @@
     // nested routes? like for tabs?
     // wildcards? any? So route can be inspected
 
-    function addCallback (object, route, callback) {
+    function addCallback (object, route, callback, prop) {
         var id = uid();
         object[route] = object[route] || {};
         object[route][id] = {
-            callback: callback
+            callback: callback,
+            prop: prop
         };
         return {
             remove: function () {
@@ -77,17 +78,7 @@
                 // /worksheet/employees/:id
                 // /worksheet/employees/Mike123456
 
-
-                id = route.split('/:')[0];
-                wildbacks[id] = {
-                    callback: callback,
-                    prop: route.split('/:')[1]
-                };
-                return {
-                    remove: function () {
-                        delete wildbacks[id];
-                    }
-                };
+                return addCallback(wildbacks, route.split('/:')[0], callback, route.split('/:')[1]);
             }
 
             return addCallback(callbacks, route, callback);
@@ -109,8 +100,12 @@
 
             wildCardUrl = removeLastPath(hash);
             if(wildbacks[wildCardUrl]){
-                eventDetail[wildbacks[wildCardUrl].prop] = lastPath;
-                wildbacks[wildCardUrl].callback(eventDetail);
+
+                Object.keys(wildbacks[wildCardUrl]).forEach(function (route) {
+                    eventDetail[wildbacks[wildCardUrl][route].prop] = lastPath;
+                    wildbacks[wildCardUrl][route].callback(eventDetail);
+                });
+
                 return;
             }
 
