@@ -31,11 +31,30 @@
         uidCount++;
         return 'route-' + uidCount;
     }
+
     // TODO:
     // more than one on('/route')
     // more than one REST param
     // nested routes? like for tabs?
     // wildcards? any? So route can be inspected
+
+    function addCallback (object, route, callback) {
+        var id = uid();
+        object[route] = object[route] || {};
+        object[route][id] = {
+            callback: callback
+        };
+        return {
+            remove: function () {
+                delete object[route][id];
+                if(!Object.keys(object[route]).length){
+                    delete object[route];
+                }
+            }
+        };
+    }
+
+
 
     router = {
 
@@ -71,14 +90,7 @@
                 };
             }
 
-            callbacks[route] = {
-                callback: callback
-            };
-            return {
-                remove: function () {
-                    delete callbacks[route];
-                }
-            };
+            return addCallback(callbacks, route, callback);
         },
 
         emit: function (eventDetail) {
@@ -89,7 +101,9 @@
                 lastPath = getLastPath(hash);
 
             if(callbacks[hash]){
-                callbacks[hash].callback(eventDetail);
+                Object.keys(callbacks[hash]).forEach(function (route) {
+                    callbacks[hash][route].callback(eventDetail);
+                });
                 return;
             }
 

@@ -20,72 +20,114 @@
 
             location.hash = '/';
 
-            test('it should initialize', function (done) {
-                router.on('/', function (e) {
-                    console.log('home!');
-                    expect(e.hash).to.equal('/');
-                    done();
-                });
-                //location.hash = '/';
-            });
-            test('it should listen to a simple route', function (done) {
-                router.on('/foo', function (e) {
-                    console.log('foo!');
-                    expect(e.hash).to.equal('/foo');
-                    done();
-                });
-                location.hash = '/foo';
-            });
-            test('it should listen to a double route', function (done) {
-                router.on('/foo/bar', function (e) {
-                    console.log('foo/bar!');
-                    expect(e.hash).to.equal('/foo/bar');
-                    done();
-                });
-                location.hash = '/foo/bar';
-            });
-            test('it should listen to a triple route', function (done) {
-                router.on('/foo/bar/zap', function (e) {
-                    console.log('foo/bar/zap!');
-                    expect(e.hash).to.equal('/foo/bar/zap');
-                    done();
-                });
-                location.hash = '/foo/bar/zap';
-            });
-            test('it should ignore a non-slash hash', function (done) {
-                router.on('/', function (e) {
-                    console.log('hash!');
-                    expect(e.hash).to.equal('/');
-                    done();
-                });
-                console.log('ignore......');
-                location.hash = 'ignore';
-            });
-            test('it should pass REST parameters', function (done) {
-                router.on('/endpoint/:clientId', function (e) {
-                    console.log('/endpoint/:clientId!', e);
-                    expect(e.clientId).to.equal('1234');
-                    done();
-                });
-                location.hash = '/endpoint/1234';
-            });
-            test('it should pass query parameters', function (done) {
-                router.on('/endpoint', function (e) {
-                    console.log('/endpoint!', e);
-                    expect(e.params.clientId).to.equal(987);
-                    expect(e.params.employeeId).to.equal(654);
-                    done();
-                });
-                location.hash = '/endpoint?clientId=987&employeeId=654';
-            });
+//            test('it should initialize', function (done) {
+//                router.on('/', function (e) {
+//                    console.log('home!');
+//                    expect(e.hash).to.equal('/');
+//                    done();
+//                });
+//                //location.hash = '/';
+//            });
+//            test('it should listen to a simple route', function (done) {
+//                router.on('/foo', function (e) {
+//                    console.log('foo!');
+//                    expect(e.hash).to.equal('/foo');
+//                    done();
+//                });
+//                location.hash = '/foo';
+//            });
+//            test('it should listen to a double route', function (done) {
+//                router.on('/foo/bar', function (e) {
+//                    console.log('foo/bar!');
+//                    expect(e.hash).to.equal('/foo/bar');
+//                    done();
+//                });
+//                location.hash = '/foo/bar';
+//            });
+//            test('it should listen to a triple route', function (done) {
+//                router.on('/foo/bar/zap', function (e) {
+//                    console.log('foo/bar/zap!');
+//                    expect(e.hash).to.equal('/foo/bar/zap');
+//                    done();
+//                });
+//                location.hash = '/foo/bar/zap';
+//            });
+//            test('it should ignore a non-slash hash', function (done) {
+//                router.on('/', function (e) {
+//                    console.log('hash!');
+//                    expect(e.hash).to.equal('/');
+//                    done();
+//                });
+//                console.log('ignore......');
+//                location.hash = 'ignore';
+//            });
+//            test('it should pass REST parameters', function (done) {
+//                router.on('/endpoint/:clientId', function (e) {
+//                    console.log('/endpoint/:clientId!', e);
+//                    expect(e.clientId).to.equal('1234');
+//                    done();
+//                });
+//                location.hash = '/endpoint/1234';
+//            });
+//            test('it should pass query parameters', function (done) {
+//                router.on('/endpoint', function (e) {
+//                    console.log('/endpoint!', e);
+//                    expect(e.params.clientId).to.equal(987);
+//                    expect(e.params.employeeId).to.equal(654);
+//                    done();
+//                });
+//                location.hash = '/endpoint?clientId=987&employeeId=654';
+//            });
+//
+//            test('it should catch a route that is not used', function (done) {
+//                router.on('not-found', function (e) {
+//                    console.log('not-found', e);
+//                    expect(e.hash).to.equal('/noListeners');
+//                    done();
+//                });
+//                location.hash = '/noListeners';
+//            });
 
-            test('it should catch a route that is not used', function (done) {
-                router.on('not-found', function (e) {
-                    console.log('not-found', e);
-                    expect(e.hash).to.equal('/noListeners');
-                    done();
+//            test('it should allow two listeners to the same route', function (done) {
+//                var count = 0;
+//                router.on('/double', function (e) {
+//                    console.log('/double', e);
+//                    expect(e.hash).to.equal('/double');
+//                    count++;
+//                });
+//                router.on('/double', function (e) {
+//                    console.log('/double', e);
+//                    expect(e.hash).to.equal('/double');
+//                    count++;
+//                });
+//                location.hash = '/double';
+//
+//                setTimeout(function () {
+//                    console.log('done');
+//                    expect(count).to.equal(2);
+//                    done();
+//                },300);
+//            });
+
+            test('it should allow two id-based listeners on the same route', function (done) {
+                var count = 0;
+                router.on('/double/:id', function (e) {
+                    console.log('/double', e);
+                    expect(e.id).to.equal('vision');
+                    count++;
                 });
-                location.hash = '/noListeners';
+                router.on('/double/:id', function (e) {
+                    console.log('/double', e);
+                    expect(e.id).to.equal('vision');
+                    count++;
+                });
+                location.hash = '/double/vision';
+
+                setTimeout(function () {
+                    console.log('done');
+                    expect(count).to.equal(2);
+                    done();
+                },300);
             });
         });
 
