@@ -80,6 +80,25 @@
                 location.hash = '/endpoint?clientId=987&employeeId=654';
             });
 
+            test('it should pass REST parameters and query parameters', function (done) {
+                router.on('/endpoint2/:clientId', function (e) {
+                    console.log('/endpoint2/:clientId!', e);
+                    expect(e.clientId).to.equal('1234');
+                    done();
+                });
+                location.hash = '/endpoint2/1234?companyId=987&employeeId=654';
+            });
+
+            test('it should pass REST parameters and hash parameters', function (done) {
+                router.on('/endpoint3/:clientId', function (e) {
+                    console.log(' -------- /endpoint3/:clientId!', e);
+                    expect(e.clientId).to.equal('1234');
+                    done();
+                });
+                // difference is a & not a ?
+                location.hash = '/endpoint3/1234&companyId=987&employeeId=654';
+            });
+
             test('it should catch a route that is not used', function (done) {
                 var h = router.on('not-found', function (e) {
                     console.log('not-found', e);

@@ -144,11 +144,23 @@
         if(!url){
             return {};
         }
+        function split(url) {
+            if(url.indexOf('?')>-1){
+                return url.split('?');
+            }else if(url.indexOf('&')>-1){
+                return [
+                    url.substring(0, url.indexOf('&')),
+                    url.substring(url.indexOf('&') + 1)
+                ];
+            }
+            return [url];
+        }
         var
-            params = paramsToObject(url.split('?')[1]),
-            hash = url.split('?')[0].split('#')[1] || '/',
+            params = paramsToObject(split(url)[1]),
+            hash = split(url)[0].split('#')[1] || '/',
             paths = hash ? hash.split('/') : [],
             map = {};
+
         paths.forEach(function (path) {
             map[path] = true;
         });
