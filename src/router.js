@@ -169,7 +169,6 @@
             // should start with slash
             hash = '/';
         }
-        console.log('hash', hash);
         return {
             url: url,
             hash: hash,
