@@ -10,6 +10,7 @@
         <a href="#/abc">ABC</a>
         <a href="#/def">DEF</a>
         <a href="#/ghi">GHI</a>
+        <a href="#/jkl">JKL</a>
     </div>
     <script>
 
@@ -21,12 +22,24 @@
             console.log('DEF');
         });
 
+        router.on('/jkl', function () {
+            console.log('JKL');
+        });
+
         router.on('/ghi', function (event) {
             console.log('after: GHI');
         });
 
         router.before('/ghi', function (event, callback) {
             console.log('before: GHI');
+
+            setTimeout(function () {
+                callback(0);
+            }, 500);
+        });
+
+        router.leave('/jkl', function (event, callback) {
+            console.log('leave: JKL');
 
             setTimeout(function () {
                 callback(0);

@@ -13,6 +13,7 @@
         callbacks = {},
         wildbacks = {},
         beforebacks = {},
+        leavebacks = {},
         notFound = {},
         initTimer,
         initialize = function () {
@@ -73,10 +74,9 @@
                 };
             }
 
+            // /worksheet/employees/:id
+            // /worksheet/employees/Mike123456
             if(route.indexOf(':') > -1){
-                // /worksheet/employees/:id
-                // /worksheet/employees/Mike123456
-
                 return addCallback(wildbacks, route.split('/:')[0], callback, route.split('/:')[1]);
             }
 
@@ -88,12 +88,38 @@
             return addCallback(beforebacks, route, callback);
         },
 
-        emit: function (eventDetail, skipBeforeBacks) {
+        leave: function (route, callback) {
+            initialize();
+            return addCallback(leavebacks, route, callback);
+        },
+
+        emit: function (eventDetail, skipBeforeBacks, skipLeaveBacks) {
 
             var
                 hash = eventDetail.hash,
+                phash = eventDetail.previous.hash,
                 wildCardUrl,
                 lastPath = getLastPath(hash);
+
+            if(!skipLeaveBacks && phash){
+                if(leavebacks[phash]) {
+                    Object.keys(leavebacks[phash]).forEach(function (route) {
+                        leavebacks[phash][route].callback(eventDetail, function (result) {
+                            if(hash === currentState.hash){
+                                if(result) {
+                                    router.emit(eventDetail, false, true);
+                                }else if(eventDetail.previous.hash){
+                                    location.hash = phash;
+                                }
+                            }
+                            else{
+                                console.warn('Hash has changed - cannot continue with `leave` action');
+                            }
+                        });
+                    });
+                    return;
+                }
+            }
 
             if(!skipBeforeBacks){
                 if(beforebacks[hash]) {
