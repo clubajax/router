@@ -12,6 +12,7 @@
         currentState = {},
         callbacks = {},
         wildbacks = {},
+        beforebacks = {},
         notFound = {},
         initTimer,
         initialize = function () {
@@ -55,8 +56,6 @@
         };
     }
 
-
-
     router = {
 
         on: function (route, callback) {
@@ -84,12 +83,37 @@
             return addCallback(callbacks, route, callback);
         },
 
-        emit: function (eventDetail) {
+        before: function (route, callback) {
+            initialize();
+            return addCallback(beforebacks, route, callback);
+        },
+
+        emit: function (eventDetail, skipBeforeBacks) {
 
             var
                 hash = eventDetail.hash,
                 wildCardUrl,
                 lastPath = getLastPath(hash);
+
+            if(!skipBeforeBacks){
+                if(beforebacks[hash]) {
+                    Object.keys(beforebacks[hash]).forEach(function (route) {
+                        beforebacks[hash][route].callback(eventDetail, function (result) {
+                            if(hash === currentState.hash){
+                                if(result) {
+                                    router.emit(eventDetail, true);
+                                }else if(eventDetail.previous.hash){
+                                    location.hash = eventDetail.previous.hash;
+                                }
+                            }
+                            else{
+                                console.warn('Hash has changed - cannot continue with `before` action');
+                            }
+                        });
+                    });
+                    return;
+                }
+            }
 
             if(callbacks[hash]){
                 Object.keys(callbacks[hash]).forEach(function (route) {

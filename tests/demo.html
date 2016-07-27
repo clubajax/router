@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+    <title>router demo</title>
+    <script src="../src/router.js"></script>
+</head>
+<body>
+    <h1>router demo</h1>
+    <div class="links">
+        <a href="#/abc">ABC</a>
+        <a href="#/def">DEF</a>
+        <a href="#/ghi">GHI</a>
+    </div>
+    <script>
+
+        router.on('/abc', function () {
+            console.log('ABC');
+        });
+
+        router.on('/def', function () {
+            console.log('DEF');
+        });
+
+        router.on('/ghi', function (event) {
+            console.log('after: GHI');
+        });
+
+        router.before('/ghi', function (event, callback) {
+            console.log('before: GHI');
+
+            setTimeout(function () {
+                callback(0);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
