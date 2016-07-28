@@ -101,6 +101,9 @@
                 wildCardUrl,
                 lastPath = getLastPath(hash);
 
+            this.hash = hash;
+            this.current = eventDetail;
+
             if(!skipLeaveBacks && phash){
                 if(leavebacks[phash]) {
                     Object.keys(leavebacks[phash]).forEach(function (route) {
