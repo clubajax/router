@@ -8,6 +8,7 @@
 
     var
         router,
+        returnHash,
         uidCount = 0,
         currentState = {},
         callbacks = {},
@@ -101,6 +102,12 @@
                 wildCardUrl,
                 lastPath = getLastPath(hash);
 
+            if(returnHash === hash){
+                returnHash = null;
+                return;
+            }
+            returnHash = null;
+
             this.hash = hash;
             this.current = eventDetail;
 
@@ -112,6 +119,7 @@
                                 if(result) {
                                     router.emit(eventDetail, false, true);
                                 }else if(eventDetail.previous.hash){
+                                    returnHash = phash;
                                     location.hash = phash;
                                 }
                             }
