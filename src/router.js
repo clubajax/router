@@ -21,9 +21,9 @@
             clearTimeout(initTimer);
             initTimer = setTimeout(function () {
                 window.addEventListener('hashchange', function (event) {
-                    //console.log('hashchange', event);
-                    // IE does not have URLs in the event
-                    router.emit(parse(event.newURL || location.href, event.oldURL));
+                    // IE does not have URLs in the event, so use previous
+                    var prev = router.current ? router.current.url : '';
+                    router.emit(parse(event.newURL || location.href, prev));
                 });
                 router.emit(parse(location.href));
                 initialize = function () {};
@@ -109,7 +109,7 @@
             returnHash = null;
 
             this.hash = hash;
-            this.current = eventDetail;
+
 
             if(!skipLeaveBacks && phash){
                 if(leavebacks[phash]) {
@@ -151,6 +151,8 @@
                     return;
                 }
             }
+
+            this.current = eventDetail;
 
             if(callbacks[hash]){
                 Object.keys(callbacks[hash]).forEach(function (route) {
