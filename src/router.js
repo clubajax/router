@@ -117,8 +117,11 @@
                         leavebacks[phash][route].callback(eventDetail, function (result) {
                             if(hash === currentState.hash){
                                 if(result) {
+                                    // continue
                                     router.emit(eventDetail, false, true);
+                                    router.current = eventDetail;
                                 }else if(eventDetail.previous.hash){
+                                    // reject
                                     returnHash = phash;
                                     location.hash = phash;
                                 }
@@ -128,6 +131,7 @@
                             }
                         });
                     });
+
                     return;
                 }
             }
@@ -139,6 +143,7 @@
                             if(hash === currentState.hash){
                                 if(result) {
                                     router.emit(eventDetail, true);
+                                    router.current = eventDetail;
                                 }else if(eventDetail.previous.hash){
                                     location.hash = eventDetail.previous.hash;
                                 }
@@ -148,11 +153,12 @@
                             }
                         });
                     });
+
                     return;
                 }
             }
 
-            this.current = eventDetail;
+            router.current = eventDetail;
 
             if(callbacks[hash]){
                 Object.keys(callbacks[hash]).forEach(function (route) {
