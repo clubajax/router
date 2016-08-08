@@ -11,10 +11,10 @@
         returnHash,
         uidCount = 0,
         currentState = {},
-        callbacks = {},
-        wildbacks = {},
-        beforebacks = {},
-        leavebacks = {},
+        callbacks = {id:'callbacks'},
+        wildbacks = {id:'wildbacks'},
+        beforebacks = {id:'beforebacks'},
+        leavebacks = {id:'leavebacks'},
         notFound = {},
         initTimer,
         initialize = function () {
@@ -50,9 +50,11 @@
         };
         return {
             remove: function () {
-                delete object[route][id];
-                if(!Object.keys(object[route]).length){
-                    delete object[route];
+                if(object[route]) {
+                    delete object[route][id];
+                    if (!Object.keys(object[route]).length) {
+                        delete object[route];
+                    }
                 }
             }
         };
