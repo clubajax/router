@@ -114,22 +114,27 @@
             if(!skipLeaveBacks && phash){
                 if(leavebacks[phash]) {
                     Object.keys(leavebacks[phash]).forEach(function (route) {
-                        leavebacks[phash][route].callback(eventDetail, function (result) {
-                            if(hash === currentState.hash){
-                                if(result) {
-                                    // continue
-                                    router.emit(eventDetail, false, true);
-                                    router.current = eventDetail;
-                                }else if(eventDetail.previous.hash){
-                                    // reject
-                                    returnHash = phash;
-                                    location.hash = phash;
+                        if(leavebacks[phash][route] && leavebacks[phash][route].callback) {
+                            leavebacks[phash][route].callback(eventDetail, function (result) {
+                                if (hash === currentState.hash) {
+                                    if (result) {
+                                        // continue
+                                        router.emit(eventDetail, false, true);
+                                        router.current = eventDetail;
+                                    }
+                                    else if (eventDetail.previous.hash) {
+                                        // reject
+                                        returnHash = phash;
+                                        location.hash = phash;
+                                    }
                                 }
-                            }
-                            else{
-                                console.warn('Hash has changed - cannot continue with `leave` action');
-                            }
-                        });
+                                else {
+                                    console.warn('Hash has changed - cannot continue with `leave` action');
+                                }
+                            });
+                        }else{
+                            console.warn('router: callback missing for route', phash, route);
+                        }
                     });
 
                     return;
