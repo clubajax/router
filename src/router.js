@@ -104,7 +104,7 @@
                 wildCardUrl,
                 lastPath = getLastPath(hash);
 
-            if(returnHash === hash){
+            if(returnHash === hash || phash === hash){
                 returnHash = null;
                 return;
             }
@@ -121,11 +121,13 @@
                                 if (hash === currentState.hash) {
                                     if (result) {
                                         // continue
+                                        ///console.log('router.leaveback.continue');
                                         router.emit(eventDetail, false, true);
                                         router.current = eventDetail;
                                     }
                                     else if (eventDetail.previous.hash) {
                                         // reject
+                                        //console.log('router.leaveback.reject', eventDetail.previous.hash, phash);
                                         returnHash = phash;
                                         location.hash = phash;
                                     }
@@ -149,9 +151,14 @@
                         beforebacks[hash][route].callback(eventDetail, function (result) {
                             if(hash === currentState.hash){
                                 if(result) {
+                                    // continue
+                                    console.log('router.beforeback.continue');
                                     router.emit(eventDetail, true);
                                     router.current = eventDetail;
-                                }else if(eventDetail.previous.hash){
+                                }
+                                else if(eventDetail.previous.hash){
+                                    // reject
+                                    console.log('router.beforeback.reject');
                                     location.hash = eventDetail.previous.hash;
                                 }
                             }
